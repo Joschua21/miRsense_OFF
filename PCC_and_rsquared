@@ -1,0 +1,113 @@
+import pandas as pd
+import os
+import numpy as np
+from scipy.stats import pearsonr
+
+def read_csv_file(file_path):
+    return pd.read_csv(file_path)
+
+def extract_data(df, time_points):
+    data = {}
+    for time_point in time_points:
+        data[time_point]=df[time_point].values
+    return data
+
+def calculate_pearson(data1, data2):
+    correlation, _ = pearsonr(data1, data2)
+    r_squared = correlation ** 2
+    return correlation, r_squared
+
+def calculate_cv(data1, data2):
+    mean_data1 = np.mean(data1)
+    mean_data2 = np.mean(data2)
+    std_data1 = np.std(data1)
+    std_data2 = np.std(data2)
+
+    cv_data1 = std_data1 / mean_data1 * 100
+    cv_data2 = std_data2 / mean_data2 * 100
+
+    return cv_data1, cv_data2
+
+if __name__ == "__main__": ##rb and gb as two analysis methods
+    data_directory = "/Users/..."
+    gb = "file1.csv"
+    rb = "file2.csv"
+
+    gb_filepath = os.path.join(data_directory, gb)
+    rb_filepath = os.path.join(data_directory, rb)
+
+    df_gb = read_csv_file(gb_filepath)
+    df_rb = read_csv_file(rb_filepath)
+
+    time_points = ["12h", "24h", "48h"]
+
+    data_gb = extract_data(df_gb, time_points)
+    data_rb = extract_data(df_rb, time_points)
+
+    cvs_data_gb = {}
+    cvs_data_rb = {}
+    for time_point in time_points:
+        cvs_data_gb[time_point], cvs_data_rb[time_point] = calculate_cv(data_gb[time_point], data_rb[time_point])
+        print(cvs_data_rb, cvs_data_gb)
+
+    for time_point in time_points:
+        correlation, r_squared = calculate_pearson(data_gb[time_point], data_rb[time_point])
+        print(f"PCC for {time_point}: {correlation}")
+        print(f"R-squared for {time_point}:{r_squared}")
+
+####Blant Altman plot:
+
+import os
+import pandas as pd
+import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
+
+def read_csv_file(file_path):
+    return pd.read_csv(file_path)
+
+def extract_data(df, time_points):
+    data = {}
+    for time_point in time_points:
+        data[time_point] = df[time_point].values
+    return data
+
+def calculate_differences(data1, data2):
+    return data1 - data2
+
+def bland_altman_plot(differences):
+    mean_difference = np.mean(differences)
+    std_difference = np.std(differences)
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(range(len(differences)), differences, color='blue', s=30, alpha=0.7)
+    plt.axhline(mean_difference, color='red', linestyle='--', label=f'Mean Difference: {mean_difference:.2f}')
+    plt.axhline(mean_difference + 1.96 * std_difference, color='green', linestyle='--', label='Upper 95% CI')
+    plt.axhline(mean_difference - 1.96 * std_difference, color='green', linestyle='--', label='Lower 95% CI')
+    plt.xlabel('Data Points')
+    plt.ylabel('Differences')
+    plt.title(f'Bland-Altman Plot for {time_point}')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+if __name__ == "__main__":
+    data_directory = "/Users/..."
+    gb_filename = "file1.csv"
+    rb_filename = "file2.csv"
+    gb_file_path = os.path.join(data_directory, gb_filename)
+    rb_file_path = os.path.join(data_directory, rb_filename)
+    df_gb = read_csv_file(gb_file_path)
+    df_rb = read_csv_file(rb_file_path)
+
+    time_points = ["12h", "24h", "48h"]
+
+    data_gb = extract_data(df_gb, time_points)
+    data_rb = extract_data(df_rb, time_points)
+
+    differences = {}
+    for time_point in time_points:
+        differences[time_point] = calculate_differences(data_gb[time_point], data_rb[time_point])
+    for time_point in time_points:
+        bland_altman_plot(differences[time_point])
