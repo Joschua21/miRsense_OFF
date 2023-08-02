@@ -6,7 +6,7 @@ In this repository, all code used in the Master Thesis is displayed. A short des
 ABF_analysis:
 Analysis of Axon Binary Files obtained from whole-cell voltage-clamp recordings using pyABF. Baseline is averaged and subtracted from the current traces using numpy. Mean maximum current is calculated based on 100 ms range in the center of the voltage step using numpy. Data is stored in .csv file. 
 
-anova:
+Anova:
 Two-way ANOVA for repeated measurements using statsmodels ols. Posthoc Tukey's HSD comparing timepoints and conditions.
 
 Bargraphs:
@@ -21,7 +21,7 @@ Two parts for either single or multiple I/V curves in one graphic. Reads in .csv
 MWU_test:
 Scipy Mann-Whitney-U test comparing two groups defined in the code. 
 
-normality_test:
+Normality_test:
 Uses Shapiro-Wilk test from scipy to inspect normality of data groups provided in .csv file. 
 
 PCC_and_rsquared:
@@ -30,5 +30,5 @@ Uses scipy pearsonr and numpy to calculate PCC, r², and CV of dataset provided 
 Image_processing_pipelin:
 Pipeline that reads in .tiff files from fluorescence imaging, renames the files according to the order in which they are acquired and performs integrated density calculation and minimum subtraction. Output is saved in .csv file. Uses numpy, skimage and pandas. 
 
-traces:
+Traces:
 Two parts, either displaying single or multiple current traces from ABF files in graphic. Uses pyabf, matplotlib pyplot and numpy
