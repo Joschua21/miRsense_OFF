@@ -18,7 +18,7 @@ Creates boxplots comparing two or more groups represented in .csv files using se
 IV_curves:
 Two parts for either single or multiple I/V curves in one graphic. Reads in .csv file and creates I/V curve with error bars rerpesenting SEM. Used after primary ABF_analysis.
 
-MWU_test:
+MWU_and_T_test:
 Scipy Mann-Whitney-U test comparing two groups defined in the code. 
 
 Normality_test:
