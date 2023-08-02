@@ -1,0 +1,19 @@
+import pandas as pd
+from scipy.stats import shapiro
+
+def test_normality(data):
+    for column in data.columns:
+        print(f"Condition: {column}")
+
+        if data[column].nunique() == 1:
+            print("All values are equal. Skipping Shapiro-Wilk test.")
+            continue
+
+        shapiro_stat, shapiro_p = shapiro(data[column])
+        print(f"Shapiro-Wilk Test (p-value): {shapiro_p:.5f}")
+
+csv_file = "/Users/.../file.csv"
+
+data = pd.read_csv(csv_file)
+
+test_normality(data)
