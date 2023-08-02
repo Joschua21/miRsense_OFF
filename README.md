@@ -25,7 +25,7 @@ Normality_test:
 Uses Shapiro-Wilk test from scipy to inspect normality of data groups provided in .csv file. 
 
 PCC_and_rsquared:
-Uses scipy pearsonr and numpy to calculate PCC, r², and CV of dataset provided in .csv file. 
+Uses scipy, pearsonr, and numpy to calculate PCC, r², and CV of dataset provided in .csv file. Further cretes Bland-Altman plots to compare difference between datasets.
 
 Image_processing_pipelin:
 Pipeline that reads in .tiff files from fluorescence imaging, renames the files according to the order in which they are acquired and performs integrated density calculation and minimum subtraction. Output is saved in .csv file. Uses numpy, skimage and pandas. 
