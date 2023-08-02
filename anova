@@ -1,0 +1,29 @@
+import pandas as pd
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+data = pd.read_csv('/Users/.../file.csv')
+
+data = data.dropna()
+
+#ANOVA formula and model:
+formula = 'value ~ C(condition) + C(trial) + C(time)'
+model = ols(formula, data).fit()
+
+anova_table = sm.stats.anova_lm(model, typ=3)
+print(anova_table)
+
+posthoc = pairwise_tukeyhsd(data['value'], data['condition'])
+
+print("All Time Points:")
+print(posthoc)
+print()
+
+for time_point in data['time'].unique():
+    subset = data[data['time'] == time_point]
+    posthoc_time = pairwise_tukeyhsd(subset['value'], subset['condition'])
+    print(f"Time Point: {time_point}")
+    print(posthoc_time)
+    print()
+
