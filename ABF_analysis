@@ -1,0 +1,43 @@
+import pyabf
+import numpy as np
+import os
+import csv
+
+directory_path = "/Users/..."
+output_directory = "/Users/..."
+last_directory = os.path.basename(os.path.normpath(directory_path))
+output_csv_path = os.path.join(output_directory, f"results_{last_directory}_new.csv")
+results = []
+
+for file_name in os.listdir(directory_path):
+    if file_name.endswith(".abf"):
+        file_path = os.path.join(directory_path, file_name)
+        abf = pyabf.ABF(file_path)
+        file_number = file_name.split("_")[-1].split(".")[0]
+
+    for sweep_number in range(abf.sweepCount):
+        abf.setSweep(sweep_number)
+        sweep_data = abf.sweepY
+        time = abf.sweepX
+
+        baseline_duration = 0.05 #adjust according to protocol
+        baseline_end_index = int(baseline_duration * abf.dataRate)
+        baseline_value = np.mean(sweep_data[:baseline_end_index])
+
+        sweep_data -= baseline_value
+        sweep_data += 0
+
+        time_start  = 0.10 #adjust according to protocol
+        time_end = 0.20    #adjust according to protocol
+        time_range_indices = np.where((time >= time_start) & (time <=time_end))
+        mean_value = np.mean(sweep_data[time_range_indices])
+
+        result = [file_number, sweep_number, mean_value]
+        results.append(result)
+
+with open(output_csv_path, "w", newline="") as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(["File Name", "Sweep Number", "Mean Maximum"])
+    writer.writerows(results)
+
+print("finished")
