@@ -1,0 +1,93 @@
+import os
+import shutil
+import numpy as np
+from skimage import io
+import pandas as pd
+
+tag_range = [tag for tag in range(1, 11) if tag != 6] #Well 6 as fluroescent control 
+
+colors = ["bf", "red 100", "gfp 100"]
+
+time_point = '24 h' #adjust according to the time point imaged
+
+directory = f"/Users/.../{time_point}"
+
+###Change:
+# directory to the correct path
+# tiff_directory to the correct path
+# time_point to the timepoint of the files - this is included in the .csv file name
+# If you change colors, you need to change "color_index = (color_index +1) % X" with X matching the number of colors
+# Change the "tag_range" according to the number of Wells imaged
+# If more than 8 locations are renamed, change the break statement
+###Code currently analyses all gfp and dsred values for minimum subtraction
+
+well_values = {}
+
+for tag_number in tag_range:
+    tag = f"Well {tag_number}"
+
+    ###################################################################################################################################
+    tiff_directory = f"/Users/.../{time_point}/{tag}"
+    ###################################################################################################################################
+
+    renamed_directory = os.path.join(tiff_directory, "renamed_files")
+    os.makedirs(renamed_directory, exist_ok=True)
+
+    prefix = 1
+    suffix = 1
+    color_index = 0
+    subdirectory_images = []
+    for filename in os.listdir(tiff_directory):
+        if not filename.endswith(".tif"):
+            continue
+        old_path = os.path.join(tiff_directory, filename)
+        color = colors[color_index]
+        new_prefix = f"{prefix:02d}"
+        new_suffix = f"{color}"
+        new_filename = f"{new_prefix} {new_suffix}.tif"
+        new_path = os.path.join(renamed_directory, new_filename)
+        shutil.copy2(old_path, new_path)
+        subdirectory_images.append(new_filename)
+        color_index = (color_index + 1) % 3  # change the number after the "%" according to the number of colors you have (e.g., to 6)
+        if color_index == 0:
+            prefix += 1
+            if prefix > 8:  # this needs to be higher if more locations are imaged. Currently up to 8 replicates
+                break
+
+    output_table = [['Image', 'Mean Integrated Density', 'Minimum', 'Mean Integrated Density Minus Minimum']]
+
+    for image_file in subdirectory_images:
+        image = io.imread(os.path.join(renamed_directory, image_file))
+        mean_density = np.mean(image)
+        min_intensity = np.min(image)
+        corrected_density = mean_density - min_intensity
+        output_table.append([image_file, mean_density, min_intensity, corrected_density])
+    output_table_name = f"{time_point}_{tag.replace(' ', '_')}.csv"
+    output_file = os.path.join(directory, output_table_name)
+    np.savetxt(output_file, output_table, delimiter=',', fmt='%s')
+
+for filename in os.listdir(directory):
+    if filename.endswith(".csv"):
+        filepath = os.path.join(directory, filename)
+        well_number = filename.split('_')[2]
+        df = pd.read_csv(filepath)
+        gfp_values = df.loc[df['Image'].str.contains('gfp'), 'Mean Integrated Density Minus Minimum']
+        well_values[well_number] = gfp_values.tolist()
+output_df = pd.DataFrame(well_values)
+output_path = os.path.join(directory, f"minimum_subtraction_gfp_{time_point.replace(' ', '_')}.csv")
+output_df.to_csv(output_path, index=False)
+
+well_values = {}
+
+for filename in os.listdir(directory):
+    if filename.endswith(".csv") and 'minimum_subtraction_gfp' not in filename:
+        filepath = os.path.join(directory, filename)
+        well_number = filename.split('_')[2]
+        df = pd.read_csv(filepath)
+        red_values = df.loc[df['Image'].str.contains('red'), 'Mean Integrated Density Minus Minimum']
+        well_values[well_number] = red_values.tolist()
+output_df = pd.DataFrame(well_values)
+output_path = os.path.join(directory, f"file_{time_point.replace(' ', '_')}.csv")
+output_df.to_csv(output_path, index=False)
+
+print("finished")
