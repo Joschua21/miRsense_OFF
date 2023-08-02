@@ -1,0 +1,32 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+directory = "/Users/..."
+
+########################################################
+#change:
+    #The title
+    #The df for the right directory
+    #the custom palette according to mimic or antimiR
+    #the number of values
+#########################################################
+
+title = "Title"
+
+df = pd.read_csv(directory + "/boxplot.csv")
+
+
+custom_palette = sns.color_palette(["#3366CC", "#FF9900", "#95bae4", "#ff7f50", "#999999", "#ea0f2d", "#a1c621", "#b0afff", "#377699", "#ff975d"]) 
+
+df_melted = pd.melt(df, id_vars=["Group", "timepoint"], value_vars=["value1", "value2", "value3", "value4", "value5", "value6", "value7", "value8", "value9"])
+
+plt.figure(figsize=(7, 7))
+ax = sns.boxplot(x="timepoint", y="value", hue="Group", data=df_melted, palette=custom_palette, boxprops=dict(alpha=.3))
+
+sns.stripplot(x="timepoint", y="value", hue="Group", data=df_melted, jitter=True, dodge=True, marker="o", alpha=0.5, palette=custom_palette, legend=False)
+plt.ylabel("Value")
+plt.xlabel("Time") 
+plt.title(title)
+plt.show()
+
