@@ -20,15 +20,17 @@ for file_name in os.listdir(directory_path):
         sweep_data = abf.sweepY
         time = abf.sweepX
 
-        baseline_duration = 0.05 #adjust according to protocol
+##Adjust baseline duration based on protocol
+        baseline_duration = 0.05 
         baseline_end_index = int(baseline_duration * abf.dataRate)
         baseline_value = np.mean(sweep_data[:baseline_end_index])
 
         sweep_data -= baseline_value
         sweep_data += 0
 
-        time_start  = 0.10 #adjust according to protocol
-        time_end = 0.20    #adjust according to protocol
+##Adjust range of mean maximum current calculation according to protocol
+        time_start  = 0.10 
+        time_end = 0.20   
         time_range_indices = np.where((time >= time_start) & (time <=time_end))
         mean_value = np.mean(sweep_data[time_range_indices])
 
