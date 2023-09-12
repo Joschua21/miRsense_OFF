@@ -17,17 +17,6 @@ def calculate_pearson(data1, data2):
     r_squared = correlation ** 2
     return correlation, r_squared
 
-def calculate_cv(data1, data2):
-    mean_data1 = np.mean(data1)
-    mean_data2 = np.mean(data2)
-    std_data1 = np.std(data1)
-    std_data2 = np.std(data2)
-
-    cv_data1 = std_data1 / mean_data1 * 100
-    cv_data2 = std_data2 / mean_data2 * 100
-
-    return cv_data1, cv_data2
-
 if __name__ == "__main__": ##rb and gb as two analysis methods
     data_directory = "/Users/..."
     gb = "file1.csv"
@@ -80,6 +69,7 @@ def bland_altman_plot(differences):
     mean_difference = np.mean(differences)
     std_difference = np.std(differences)
 
+    plt.rcParams["font.family"] = "Arial"
     plt.figure(figsize=(8, 6))
     plt.scatter(range(len(differences)), differences, color='blue', s=30, alpha=0.7)
     plt.axhline(mean_difference, color='red', linestyle='--', label=f'Mean Difference: {mean_difference:.2f}')
@@ -88,7 +78,9 @@ def bland_altman_plot(differences):
     plt.xlabel('Data Points')
     plt.ylabel('Differences')
     plt.title(f'Bland-Altman Plot for {time_point}')
-    plt.legend()
+    plt.legend(fontsize=14)
+    plt.xticks(fontsize=18)
+    plt.yticks(fontsize=18)
     plt.grid(True)
     plt.show()
 
