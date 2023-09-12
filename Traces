@@ -1,42 +1,8 @@
-############# Single Traces #############
 import pyabf
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-import os
-import csv
-
-abf_file_path = "/Users/.../file.abf"
-
-abf = pyabf.ABF(abf_file_path)
-
-sweep_number = 6  # Choose the sweep number you want to access
-abf.setSweep(sweep_number)
-sweep_data = abf.sweepY
-time = abf.sweepX
-
-baseline_duration = 0.05 #adjust according to stimulation protocol
-baseline_end_index = int(baseline_duration * abf.dataRate)
-baseline_value = np.mean(sweep_data[:baseline_end_index])
-
-sweep_data -= baseline_value
-sweep_data += 0
-
-plt.figure(figsize=(8, 4))
-plt.plot(time, sweep_data)
-plt.grid(True)
-plt.show()
-
-############# All Traces #############
-
-import pyabf
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-import csv
 
 abf_file_path = "/Users/.../file.abf"
 
@@ -44,7 +10,7 @@ abf = pyabf.ABF(abf_file_path)
 
 fig, ax = plt.subplots(figsize=(4, 4))
 
-line_color = (0.12156863, 0.46666667, 0.70588235)
+line_color = (0, 0, 0)
 
 line_width = 0.8
 
@@ -64,17 +30,17 @@ for sweep_number in range(abf.sweepCount):
     ax.plot(time, sweep_data,color=line_color, linewidth = line_width)
 
     if sweep_number == 0:
-        y_ticks = np.arange(-1000, 5100, 500)
-        ax.set_ylim(-1000, 5100)
+        y_ticks = np.arange()
+        ax.set_ylim()
         ax.set_yticks(y_ticks)
-        ax.set_xlim(0.05, 0.26001)
+        ax.set_xlim()
 
-#ax.set_xlabel("Time (ms)")
-#ax.set_ylabel("Current [pA]")
+#ax.set_xlabel("")
+#ax.set_ylabel("")
 
 ax.axis('off')
 
 plt.grid(False)
 plt.show()
-output_file_path = "/Users/josch/Documents/UCL MSc Neuroscience/Research Project/Data/Patching/results/figures/blank.png"
+output_file_path = "/Users/.../file.png"
 plt.savefig(output_file_path, dpi = 1000)
