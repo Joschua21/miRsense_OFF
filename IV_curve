@@ -1,63 +1,4 @@
 #csv files require columns "Voltage" and "Current Density"
-########################SINGLE PLOT###################################################################################################
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-
-file_path = "/Users/.../file.csv"
-df = pd.read_csv(file_path)
-
-voltages = df["Voltage"].unique()
-avg_currents = []
-sem_currents = []
-
-for voltage in voltages:
-    currents = df.loc[df["Voltage"] == voltage, "Current Density"].values
-    avg_current = np.mean(currents)
-    sem_current = np.std(currents) / np.sqrt(len(currents))
-    avg_currents.append(avg_current)
-    sem_currents.append(sem_current)
-
-fig, ax = plt.subplots()
-
-ax.plot(voltages, avg_currents, color='black', linestyle='-', marker='o', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
-ax.errorbar(voltages, avg_currents, yerr=sem_currents, fmt='o', color='black', ecolor='black', capsize=0, elinewidth=1, markerfacecolor='none')
-
-ax.axvline(x=0, color='black', linestyle='-', linewidth=1)
-ax.axhline(y=0, color='black', linestyle='-', linewidth=1)
-
-ax.spines['left'].set_position(('data', 0))
-ax.yaxis.set_ticks_position('left')
-ax.xaxis.set_ticks_position('bottom')
-
-ax.spines['bottom'].set_position(('data', 0))
-ax.xaxis.set_ticks_position('bottom')
-ax.yaxis.set_ticks_position('left')
-
-#Set axis labels
-ax.set_xlabel("V [mV]")
-ax.set_ylabel("I [pA/pF]", rotation=0, verticalalignment='center')
-
-ax.spines['right'].set_visible(False)
-ax.spines['top'].set_visible(False)
-
-ax.set_xticks([-80, -60, -40, -20, 0, 20])
-ax.set_xticklabels(["-80", "-60", "-40", "-20", "0", "20"])
-
-y_min = min(avg_currents) * 1.1
-y_max = max(avg_currents) * 1.1
-if y_min > -3:
-    y_min = -3
-ax.set_ylim(bottom=y_min, top = y_max)
-
-ax.yaxis.set_label_coords(0.77, 1.04)
-
-plt.grid(False)
-plt.show()
-output_file_path = "/Users/.../file.png"
-plt.savefig(output_file_path, dpi = 1000)
-
-########################################DOUBLE PLOT##############################################################################
 
 import pandas as pd
 import numpy as np
@@ -93,11 +34,20 @@ for voltage in voltages2:
 
 
 fig, ax = plt.subplots()
+##Adjust labels for ax.plot (both)
 ax.plot(voltages1, avg_currents1, color='black', linestyle='-', marker='o', markersize=6, markerfacecolor='none', markeredgewidth=1.5, label='AntimiR')
 ax.errorbar(voltages1, avg_currents1, yerr=sem_currents1, fmt='o', color='black', ecolor='black', capsize=0, elinewidth=1, markerfacecolor='none')
+for x, y, yerr in zip(voltages1, avg_currents1, sem_currents1):
+    ax.plot([x, x], [y - yerr, y + yerr], color='black', linewidth=1)
+    ax.plot([x - 1, x + 1], [y - yerr, y - yerr], color='black', linewidth=1)
+    ax.plot([x - 1, x + 1], [y + yerr, y + yerr], color='black', linewidth=1)
 
 ax.plot(voltages2, avg_currents2, color='black', linestyle='-', marker='s', markersize=6, markerfacecolor='none', markeredgewidth=1.5, label='EKC')
-ax.errorbar(voltages2, avg_currents2, yerr=sem_currents2, fmt='s', color='black', ecolor='black', capsize=0, elinewidth=1, markerfacecolor='none')
+ax.errorbar(voltages2, avg_currents2, yerr=sem_currents2, fmt='v', color='black', ecolor='black', capsize=0, elinewidth=1, markerfacecolor='none')
+for x, y, yerr in zip(voltages2, avg_currents2, sem_currents2):
+    ax.plot([x, x], [y - yerr, y + yerr], color='black', linewidth=1)
+    ax.plot([x - 1, x + 1], [y - yerr, y - yerr], color='black', linewidth=1)
+    ax.plot([x - 1, x + 1], [y + yerr, y + yerr], color='black', linewidth=1)
 
 ax.axvline(x=0, color='black', linestyle='-', linewidth=1)
 ax.axhline(y=0, color='black', linestyle='-', linewidth=1)
