@@ -3,26 +3,25 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+##Insert Data
 df1 = pd.DataFrame({
-    "Group": ["group name 1"] * 4,
-    "timepoint": ["1", "2"],
-    "value": [1, 2],
-    "sem": [0.1, 0.2]
+    "Group": ["group name 1"] * 4, #adjust according to number of variables
+    "timepoint": [], 
+    "value": [],
+    "sem": []
 })
 
 df2 = pd.DataFrame({
     "Group": ["group name 2"] * 4,
-    "timepoint": ["1", "2"],
-    "value": [1, 2],
-    "sem": [0.1, 0.2]
+    "timepoint": [],
+    "value": [],
+    "sem": []
 })
 df_combined = pd.concat([df1, df2])
 
 plt.figure(figsize=(8, 6))
 custom_palette = sns.color_palette(["#8D538D", "#999999"]) 
-ax = sns.barplot(x="timepoint", y="value", hue="Group", data=df_combined, palette=custom_palette, alpha=0.65)
-sns.stripplot(x="timepoint", y="value", hue="Group", data=df_combined, dodge=True, marker="o", size=7, palette=custom_palette, edgecolor="black", linewidth=0.5, alpha=0.5, legend=False)
+ax = sns.barplot(x="timepoint", y="value", hue="Group", data=df_combined, palette=custom_palette, alpha=0.65, edgecolor='black')
 error_bars = df_combined.groupby(['Group', 'timepoint'])['sem'].apply(lambda x: 1.96 * x.mean())
 
 for i, bar in enumerate(ax.patches):
@@ -32,9 +31,10 @@ for i, bar in enumerate(ax.patches):
     bar_x = bar.get_x() + bar.get_width() / 2
     bar_y = bar.get_height()
     ax.errorbar(x=bar_x, y=bar_y, yerr=error_bar, ecolor='black', capsize=5, capthick=1, fmt='none')
-
-plt.ylabel("GFP Expression (A.U.)")  # Modify label according to your data
-plt.xlabel("Time post-transfection")  # Modify label according to your data
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.ylabel()  # Modify label according to your data
+plt.xlabel()  # Modify label according to your data
 plt.title()  # Modify title as needed
 
 plt.legend()
